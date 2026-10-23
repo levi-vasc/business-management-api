@@ -6,8 +6,7 @@ class Categoria(Base):
     __tablename__ = "categorias"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    nome = Column(String(100), nullable=False)
-    descricao = Column(String(255), nullable=True)
+    nome = Column(String(100), nullable=False, unique=True)
 
     def __repr__(self):
         return f"<Categoria(id={self.id}, nome='{self.nome}')>"
