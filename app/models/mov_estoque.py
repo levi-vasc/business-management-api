@@ -13,7 +13,7 @@ class MovEstoque(Base):
     qnt = Column(Integer, nullable=False)
     # server_default=func.now() pega a data atual do banco de dados
     data = Column(Date, server_default=func.now())
-    produto_id = Column(Integer, ForeignKey("produtos.id"), nullable=False)
+    produto_id = Column(UUID(as_uuid=True), ForeignKey("produtos.id"), nullable=False)
 
     def __repr__(self):
         return f"<MovEstoque(id={self.id}, tipo='{self.tipo}', qnt={self.qnt}, data={self.data}, produto_id={self.produto_id})>"

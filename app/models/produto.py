@@ -12,8 +12,8 @@ class Produto(Base):
     codigo = Column(Integer, nullable=False, index=True, unique=True)
     preco_custo = Column(Float, nullable=False)
     preco_venda = Column(Float, nullable=False)
-    categoria_id = Column(Integer, ForeignKey("categorias.id"), nullable=False)
-    fornecedor_id = Column(Integer, ForeignKey("fornecedores.id"), nullable=False)
+    categoria_id = Column(UUID(as_uuid=True), ForeignKey("categorias.id"), nullable=False)
+    fornecedor_id = Column(UUID(as_uuid=True), ForeignKey("fornecedores.id"), nullable=False)
     estoque = Column(Integer, nullable=False, default=0)
     # server_default = func.now() Pega a data pelo próprio banco de dados
     data_cadastro = Column(Date, nullable=False, server_default=func.now())

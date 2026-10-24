@@ -4,14 +4,13 @@ import uuid
 
 
 class MovEstoqueCreate(BaseModel):
-    produto_id: int
+    produto_id: uuid.UUID
     tipo: str  # 'ENTRADA' ou 'SAIDA'
     qnt: int
 
-
 class MovEstoqueResponse(BaseModel):
     id: uuid.UUID
-    produto_id: int
+    produto_id: uuid.UUID
     tipo: str
     qnt: int
     data: date

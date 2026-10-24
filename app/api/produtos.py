@@ -1,3 +1,4 @@
+import uuid
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.core.database import get_db
@@ -46,7 +47,7 @@ def listar_produtos(db: Session = Depends(get_db)):
 
 
 @router.get("/{produto_id}", response_model=ProdutoResponse)
-def obter_produto(produto_id: int, db: Session = Depends(get_db)):
+def obter_produto(produto_id: uuid.UUID, db: Session = Depends(get_db)):
     produto = db.query(Produto).filter(Produto.id == produto_id).first()
     if not produto:
         raise HTTPException(
@@ -57,7 +58,7 @@ def obter_produto(produto_id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/{produto_id}", response_model=ProdutoResponse)
-def atualizar_produto(produto_id: int, dados: ProdutoUpdate, db: Session = Depends(get_db)):
+def atualizar_produto(produto_id: uuid.UUID, dados: ProdutoUpdate, db: Session = Depends(get_db)):
     produto = db.query(Produto).filter(Produto.id == produto_id).first()
     if not produto:
         raise HTTPException(
@@ -99,7 +100,7 @@ def atualizar_produto(produto_id: int, dados: ProdutoUpdate, db: Session = Depen
 
 
 @router.delete("/{produto_id}", status_code=status.HTTP_200_OK)
-def excluir_produto(produto_id: int, db: Session = Depends(get_db)):
+def excluir_produto(produto_id: uuid.UUID, db: Session = Depends(get_db)):
     produto = db.query(Produto).filter(Produto.id == produto_id).first()
     if not produto:
         raise HTTPException(
@@ -107,7 +108,6 @@ def excluir_produto(produto_id: int, db: Session = Depends(get_db)):
             detail="Produto não encontrado."
         )
 
-    # Regra de integridade: protege histórico de auditoria de movimentações
     movimentacoes = db.query(MovEstoque).filter(MovEstoque.produto_id == produto_id).first()
     if movimentacoes:
         raise HTTPException(

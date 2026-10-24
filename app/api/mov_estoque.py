@@ -1,3 +1,4 @@
+import uuid
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.core.database import get_db
@@ -63,7 +64,7 @@ def listar_movimentacoes(db: Session = Depends(get_db)):
 
 
 @router.get("/{movimentacao_id}", response_model=MovEstoqueResponse)
-def obter_movimentacao(movimentacao_id: int, db: Session = Depends(get_db)):
+def obter_movimentacao(movimentacao_id: uuid.UUID, db: Session = Depends(get_db)):
     movimentacao = db.query(MovEstoque).filter(MovEstoque.id == movimentacao_id).first()
     if not movimentacao:
         raise HTTPException(

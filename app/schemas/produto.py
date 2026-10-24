@@ -9,8 +9,8 @@ class ProdutoBase(BaseModel):
     codigo: int
     preco_custo: float
     preco_venda: float
-    categoria_id: int
-    fornecedor_id: int
+    categoria_id: uuid.UUID
+    fornecedor_id: uuid.UUID
     estoque: int = 0
     estoque_min: int = 1
 
@@ -24,8 +24,8 @@ class ProdutoUpdate(BaseModel):
     codigo: Optional[int] = None
     preco_custo: Optional[float] = None
     preco_venda: Optional[float] = None
-    categoria_id: Optional[int] = None
-    fornecedor_id: Optional[int] = None
+    categoria_id: Optional[uuid.UUID] = None
+    fornecedor_id: Optional[uuid.UUID] = None
     estoque: Optional[int] = None
     estoque_min: Optional[int] = None
 

@@ -1,3 +1,4 @@
+import uuid
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.core.database import get_db
@@ -31,7 +32,7 @@ def listar_categorias(db: Session = Depends(get_db)):
 
 
 @router.get("/{categoria_id}", response_model=CategoriaResponse)
-def obter_categoria(categoria_id: int, db: Session = Depends(get_db)):
+def obter_categoria(categoria_id: uuid.UUID, db: Session = Depends(get_db)):
     categoria = db.query(Categoria).filter(Categoria.id == categoria_id).first()
     if not categoria:
         raise HTTPException(
@@ -42,7 +43,7 @@ def obter_categoria(categoria_id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/{categoria_id}", response_model=CategoriaResponse)
-def atualizar_categoria(categoria_id: int, dados: CategoriaUpdate, db: Session = Depends(get_db)):
+def atualizar_categoria(categoria_id: uuid.UUID, dados: CategoriaUpdate, db: Session = Depends(get_db)):
     categoria = db.query(Categoria).filter(Categoria.id == categoria_id).first()
     if not categoria:
         raise HTTPException(
@@ -67,7 +68,7 @@ def atualizar_categoria(categoria_id: int, dados: CategoriaUpdate, db: Session =
 
 
 @router.delete("/{categoria_id}", status_code=status.HTTP_200_OK)
-def excluir_categoria(categoria_id: int, db: Session = Depends(get_db)):
+def excluir_categoria(categoria_id: uuid.UUID, db: Session = Depends(get_db)):
     categoria = db.query(Categoria).filter(Categoria.id == categoria_id).first()
     if not categoria:
         raise HTTPException(
