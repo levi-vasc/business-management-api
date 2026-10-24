@@ -2,7 +2,6 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict
 import uuid
 
-
 class FornecedorBase(BaseModel):
     nome: str
     cnpj: str

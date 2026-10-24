@@ -1,12 +1,17 @@
 import uuid
-from fastapi import APIRouter, Depends, HTTPException, status
+from typing import Optional
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.categoria import Categoria
 from app.models.fornecedor import Fornecedor
 from app.models.mov_estoque import MovEstoque
 from app.models.produto import Produto
-from app.schemas.produto import ProdutoCreate, ProdutoUpdate, ProdutoResponse
+from app.schemas.produto import (
+    ProdutoCreate,
+    ProdutoUpdate,
+    ProdutoResponse,
+)
 
 router = APIRouter(prefix="/produtos", tags=["Produtos"])
 
@@ -42,8 +47,28 @@ def criar_produto(dados: ProdutoCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/", response_model=list[ProdutoResponse])
-def listar_produtos(db: Session = Depends(get_db)):
-    return db.query(Produto).all()
+def listar_produtos(
+    nome: Optional[str] = Query(None, description="Filtrar por nome do produto (busca parcial insensível a maiúsculas)"),
+    codigo: Optional[int] = Query(None, description="Filtrar por código exato do produto"),
+    categoria_id: Optional[uuid.UUID] = Query(None, description="Filtrar por ID da categoria"),
+    fornecedor_id: Optional[uuid.UUID] = Query(None, description="Filtrar por ID do fornecedor"),
+    apenas_estoque_baixo: bool = Query(False, description="Exibir apenas produtos que atingiram ou estão abaixo do estoque mínimo"),
+    db: Session = Depends(get_db),
+):
+    query = db.query(Produto)
+
+    if nome:
+        query = query.filter(Produto.nome.ilike(f"%{nome.strip()}%"))
+    if codigo is not None:
+        query = query.filter(Produto.codigo == codigo)
+    if categoria_id:
+        query = query.filter(Produto.categoria_id == categoria_id)
+    if fornecedor_id:
+        query = query.filter(Produto.fornecedor_id == fornecedor_id)
+    if apenas_estoque_baixo:
+        query = query.filter(Produto.estoque <= Produto.estoque_min)
+
+    return query.all()
 
 
 @router.get("/{produto_id}", response_model=ProdutoResponse)
