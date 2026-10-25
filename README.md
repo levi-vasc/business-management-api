@@ -21,8 +21,7 @@ Construída com **FastAPI**, **SQLAlchemy 2** e **PostgreSQL**, com migrações 
 - [Modelo de dados](#modelo-de-dados)
 - [Tratamento de erros](#tratamento-de-erros)
 - [Testes](#testes)
-- [Notas de segurança e pontos de atenção](#notas-de-segurança-e-pontos-de-atenção)
-
+  
 ---
 
 ## Funcionalidades
@@ -145,13 +144,6 @@ Acesse:
 | Swagger UI | http://localhost:8000/docs |
 
 ## Variáveis de ambiente
-
-| Variável | Obrigatória | Padrão | Descrição |
-|---|---|---|---|
-| `DATABASE_URL` | Sim (recomendado) | `postgresql+psycopg2://postgres:postgres@localhost:5432/business_management` | String de conexão. O prefixo `postgresql://` é convertido automaticamente para `postgresql+psycopg2://`. |
-| `SECRET_KEY` | **Sim em produção** | valor fixo de desenvolvimento | Chave usada para assinar os tokens JWT. |
-| `ALGORITHM` | Não | `HS256` | Algoritmo de assinatura do JWT. |
-| `ACCESS_TOKEN_EXPIRE_MINUTES` | Não | `60` | Tempo de expiração do token, em minutos. |
 
 Exemplo de `.env`:
 
