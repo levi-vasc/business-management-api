@@ -4,7 +4,6 @@ from app.core.database import Base
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 
-
 class MovEstoque(Base):
     __tablename__ = "movimentacoes_estoque"
 

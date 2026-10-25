@@ -9,18 +9,12 @@ from app.core.database import get_db
 from app.core.security import decodificar_token
 from app.models.usuario import Usuario
 
-# Utiliza HTTPBearer para captura limpa do header 'Authorization: Bearer <token>'
 security = HTTPBearer(auto_error=False)
-
 
 def obter_usuario_atual(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
     db: Session = Depends(get_db),
 ) -> Usuario:
-    """
-    Dependência que valida o token JWT e retorna a instância do usuário autenticado.
-    Retorna 401 caso o token não seja informado, esteja expirado ou seja inválido.
-    """
     if not credentials:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -71,11 +65,7 @@ def obter_usuario_atual(
 
 
 def permitir_apenas(*roles_permitidas: str):
-    """
-    Fábrica de dependências para RBAC (Role-Based Access Control).
-    Permite o acesso apenas se a função (role) do usuário estiver na lista de papéis autorizados.
-    Caso contrário, retorna 403 Forbidden.
-    """
+
     def verificador_permissao(usuario: Usuario = Depends(obter_usuario_atual)) -> Usuario:
         if usuario.role not in roles_permitidas:
             roles_formatadas = ", ".join(roles_permitidas)

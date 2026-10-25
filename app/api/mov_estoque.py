@@ -40,7 +40,13 @@ def registrar_movimentacao(
             detail="A quantidade movimentada deve ser maior que zero."
         )
 
-    produto = db.query(Produto).filter(Produto.id == dados.produto_id).first()
+    # Bloqueio pessimista para evitar condições de corrida
+    produto = (
+        db.query(Produto)
+        .filter(Produto.id == dados.produto_id)
+        .with_for_update()
+        .first()
+    )
     if not produto:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
