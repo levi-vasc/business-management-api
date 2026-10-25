@@ -1,4 +1,6 @@
 import uuid
+from app.api.deps import obter_usuario_atual
+from app.models.usuario import Usuario
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.core.database import get_db
@@ -10,7 +12,7 @@ router = APIRouter(prefix="/fornecedores", tags=["Fornecedores"])
 
 
 @router.post("/", response_model=FornecedorResponse, status_code=status.HTTP_201_CREATED)
-def criar_fornecedor(dados: FornecedorCreate, db: Session = Depends(get_db)):
+def criar_fornecedor(dados: FornecedorCreate, usuario: Usuario = Depends(obter_usuario_atual), db: Session = Depends(get_db)):
     
     if db.query(Fornecedor).filter(Fornecedor.cnpj == dados.cnpj).first():
         raise HTTPException(
@@ -47,7 +49,7 @@ def obter_fornecedor(fornecedor_id: uuid.UUID, db: Session = Depends(get_db)):
 
 
 @router.put("/{fornecedor_id}", response_model=FornecedorResponse)
-def atualizar_fornecedor(fornecedor_id: uuid.UUID, dados: FornecedorUpdate, db: Session = Depends(get_db)):
+def atualizar_fornecedor(fornecedor_id: uuid.UUID, dados: FornecedorUpdate, usuario: Usuario = Depends(obter_usuario_atual), db: Session = Depends(get_db)):
     fornecedor = db.query(Fornecedor).filter(Fornecedor.id == fornecedor_id).first()
     if not fornecedor:
         raise HTTPException(
@@ -80,7 +82,7 @@ def atualizar_fornecedor(fornecedor_id: uuid.UUID, dados: FornecedorUpdate, db: 
 
 
 @router.delete("/{fornecedor_id}", status_code=status.HTTP_200_OK)
-def excluir_fornecedor(fornecedor_id: uuid.UUID, db: Session = Depends(get_db)):
+def excluir_fornecedor(fornecedor_id: uuid.UUID, usuario: Usuario = Depends(obter_usuario_atual), db: Session = Depends(get_db)):
     fornecedor = db.query(Fornecedor).filter(Fornecedor.id == fornecedor_id).first()
     if not fornecedor:
         raise HTTPException(

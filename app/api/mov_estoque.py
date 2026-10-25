@@ -21,6 +21,7 @@ router = APIRouter(prefix="/movimentacoes", tags=["Movimentações de Estoque"])
 @router.post("/", response_model=MovEstoqueResponse, status_code=status.HTTP_201_CREATED)
 def registrar_movimentacao(
     dados: MovEstoqueCreate,
+    usuario: Usuario = Depends(obter_usuario_atual),
     db: Session = Depends(get_db),
 ):
     """
@@ -84,6 +85,7 @@ def listar_movimentacoes(
     tipo: Optional[str] = Query(None, description="Filtrar por tipo: ENTRADA ou SAIDA"),
     skip: int = Query(0, ge=0, description="Número de registros a pular"),
     limit: int = Query(100, ge=1, le=500, description="Limite máximo de registros"),
+    usuario: Usuario = Depends(obter_usuario_atual),
     db: Session = Depends(get_db),
 ):
     """
@@ -192,6 +194,7 @@ def resumo_movimentacoes(
 @router.get("/{movimentacao_id}", response_model=MovEstoqueResponse)
 def obter_movimentacao(
     movimentacao_id: uuid.UUID,
+    usuario: Usuario = Depends(obter_usuario_atual),
     db: Session = Depends(get_db),
 ):
     movimentacao = db.query(MovEstoque).filter(MovEstoque.id == movimentacao_id).first()

@@ -21,6 +21,7 @@ router = APIRouter(prefix="/produtos", tags=["Produtos"])
 @router.post("/", response_model=ProdutoResponse, status_code=status.HTTP_201_CREATED)
 def criar_produto(
     dados: ProdutoCreate,
+    usuario: Usuario = Depends(obter_usuario_atual),
     db: Session = Depends(get_db),
 ):
     
@@ -94,7 +95,7 @@ def obter_produto(
 def atualizar_produto(
     produto_id: uuid.UUID,
     dados: ProdutoUpdate,
-    admin: Usuario = Depends(permitir_apenas("ADMIN")),
+    usuario: Usuario = Depends(obter_usuario_atual),
     db: Session = Depends(get_db),
 ):
     produto = db.query(Produto).filter(Produto.id == produto_id).first()
@@ -140,7 +141,7 @@ def atualizar_produto(
 @router.delete("/{produto_id}", status_code=status.HTTP_200_OK)
 def excluir_produto(
     produto_id: uuid.UUID,
-    admin: Usuario = Depends(permitir_apenas("ADMIN")),
+    usuario: Usuario = Depends(obter_usuario_atual),
     db: Session = Depends(get_db),
 ):
     produto = db.query(Produto).filter(Produto.id == produto_id).first()

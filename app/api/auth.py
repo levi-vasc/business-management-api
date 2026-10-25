@@ -18,11 +18,6 @@ def registrar_usuario(
     db: Session = Depends(get_db),
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
 ):
-    """
-    Cadastra um novo usuário no sistema.
-    - Se for o primeiro usuário do sistema, o cadastro é livre para permitir a inicialização (bootstrapping).
-    - Se já existirem usuários cadastrados, exige que o solicitante esteja autenticado como ADMIN.
-    """
     total_usuarios = db.query(Usuario).count()
 
     if total_usuarios > 0:
@@ -59,15 +54,11 @@ def registrar_usuario(
     db.refresh(novo_usuario)
     return novo_usuario
 
-
 @router.post("/login", response_model=TokenResponse)
 def login(
     dados: LoginRequest,
     db: Session = Depends(get_db),
 ):
-    """
-    Autentica o usuário via e-mail e senha e retorna um token JWT de acesso.
-    """
     usuario = db.query(Usuario).filter(Usuario.email == dados.email).first()
 
     if not usuario or not verificar_senha(dados.senha, usuario.senha_hash):
@@ -97,12 +88,8 @@ def login(
         usuario=usuario,
     )
 
-
 @router.get("/me", response_model=UsuarioResponse)
 def obter_perfil_atual(
     usuario: Usuario = Depends(obter_usuario_atual),
 ):
-    """
-    Retorna os dados cadastrais e permissões do usuário atualmente autenticado.
-    """
     return usuario

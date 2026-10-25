@@ -18,7 +18,7 @@ def obter_usuario_atual(
     if not credentials:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token de acesso não informado. É necessário enviar o cabeçalho 'Authorization: Bearer <token>'.",
+            detail="Token de acesso não informado.",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -43,7 +43,7 @@ def obter_usuario_atual(
     except (jwt.PyJWTError, ValueError):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token de acesso inválido ou malformado.",
+            detail="Token de acesso inválido.",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -71,7 +71,7 @@ def permitir_apenas(*roles_permitidas: str):
             roles_formatadas = ", ".join(roles_permitidas)
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Acesso negado: a função '{usuario.role}' não possui permissão para executar esta ação. Papel requerido: {roles_formatadas}.",
+                detail=f"Acesso negado: a função '{usuario.role}' não possui permissão para executar esta ação.",
             )
         return usuario
 
