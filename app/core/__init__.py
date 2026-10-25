@@ -1,1 +1,0 @@
-# Módulo core da aplicação
