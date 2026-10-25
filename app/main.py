@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from app.core.database import Base, engine
 import app.models
-from app.api import categorias, fornecedores, produtos, mov_estoque
+from app.api import categorias, fornecedores, produtos, mov_estoque, auth
 
 from app.core.exceptions import register_exception_handlers
 
@@ -13,6 +13,7 @@ app = FastAPI(
 
 register_exception_handlers(app)
 
+app.include_router(auth.router)
 app.include_router(categorias.router)
 app.include_router(fornecedores.router)
 app.include_router(produtos.router)

@@ -4,8 +4,10 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from app.core.database import get_db
+from app.api.deps import obter_usuario_atual, permitir_apenas
 from app.models.mov_estoque import MovEstoque
 from app.models.produto import Produto
+from app.models.usuario import Usuario
 from app.schemas.mov_estoque import (
     MovEstoqueCreate,
     MovEstoqueResponse,
@@ -17,7 +19,10 @@ router = APIRouter(prefix="/movimentacoes", tags=["Movimentações de Estoque"])
 
 
 @router.post("/", response_model=MovEstoqueResponse, status_code=status.HTTP_201_CREATED)
-def registrar_movimentacao(dados: MovEstoqueCreate, db: Session = Depends(get_db)):
+def registrar_movimentacao(
+    dados: MovEstoqueCreate,
+    db: Session = Depends(get_db),
+):
     """
     Registra uma movimentação e atualiza o estoque do produto na mesma transação.
     Se a saída for superior ao estoque atual, a operação é rejeitada para evitar estoque negativo.
@@ -134,11 +139,13 @@ def resumo_movimentacoes(
     data_fim: Optional[date] = Query(None, description="Data final do período"),
     fornecedor_id: Optional[uuid.UUID] = Query(None, description="Filtrar por fornecedor"),
     produto_id: Optional[uuid.UUID] = Query(None, description="Filtrar por produto"),
+    admin: Usuario = Depends(permitir_apenas("ADMIN")),
     db: Session = Depends(get_db),
 ):
     """
     Gera um resumo estratégico do fluxo de estoque no período:
     total de movimentações, entradas, saídas e saldo líquido de itens movimentados.
+    Acesso restrito ao perfil ADMIN.
     """
     if data_inicio and data_fim and data_inicio > data_fim:
         raise HTTPException(
@@ -177,7 +184,10 @@ def resumo_movimentacoes(
 
 
 @router.get("/{movimentacao_id}", response_model=MovEstoqueResponse)
-def obter_movimentacao(movimentacao_id: uuid.UUID, db: Session = Depends(get_db)):
+def obter_movimentacao(
+    movimentacao_id: uuid.UUID,
+    db: Session = Depends(get_db),
+):
     movimentacao = db.query(MovEstoque).filter(MovEstoque.id == movimentacao_id).first()
     if not movimentacao:
         raise HTTPException(

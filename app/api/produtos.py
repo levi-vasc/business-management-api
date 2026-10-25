@@ -7,6 +7,8 @@ from app.models.categoria import Categoria
 from app.models.fornecedor import Fornecedor
 from app.models.mov_estoque import MovEstoque
 from app.models.produto import Produto
+from app.api.deps import obter_usuario_atual, permitir_apenas
+from app.models.usuario import Usuario
 from app.schemas.produto import (
     ProdutoCreate,
     ProdutoUpdate,
@@ -17,7 +19,10 @@ router = APIRouter(prefix="/produtos", tags=["Produtos"])
 
 
 @router.post("/", response_model=ProdutoResponse, status_code=status.HTTP_201_CREATED)
-def criar_produto(dados: ProdutoCreate, db: Session = Depends(get_db)):
+def criar_produto(
+    dados: ProdutoCreate,
+    db: Session = Depends(get_db),
+):
     
     if db.query(Produto).filter(Produto.codigo == dados.codigo).first():
         raise HTTPException(
@@ -72,7 +77,10 @@ def listar_produtos(
 
 
 @router.get("/{produto_id}", response_model=ProdutoResponse)
-def obter_produto(produto_id: uuid.UUID, db: Session = Depends(get_db)):
+def obter_produto(
+    produto_id: uuid.UUID,
+    db: Session = Depends(get_db),
+):
     produto = db.query(Produto).filter(Produto.id == produto_id).first()
     if not produto:
         raise HTTPException(
@@ -83,7 +91,12 @@ def obter_produto(produto_id: uuid.UUID, db: Session = Depends(get_db)):
 
 
 @router.put("/{produto_id}", response_model=ProdutoResponse)
-def atualizar_produto(produto_id: uuid.UUID, dados: ProdutoUpdate, db: Session = Depends(get_db)):
+def atualizar_produto(
+    produto_id: uuid.UUID,
+    dados: ProdutoUpdate,
+    admin: Usuario = Depends(permitir_apenas("ADMIN")),
+    db: Session = Depends(get_db),
+):
     produto = db.query(Produto).filter(Produto.id == produto_id).first()
     if not produto:
         raise HTTPException(
@@ -125,7 +138,11 @@ def atualizar_produto(produto_id: uuid.UUID, dados: ProdutoUpdate, db: Session =
 
 
 @router.delete("/{produto_id}", status_code=status.HTTP_200_OK)
-def excluir_produto(produto_id: uuid.UUID, db: Session = Depends(get_db)):
+def excluir_produto(
+    produto_id: uuid.UUID,
+    admin: Usuario = Depends(permitir_apenas("ADMIN")),
+    db: Session = Depends(get_db),
+):
     produto = db.query(Produto).filter(Produto.id == produto_id).first()
     if not produto:
         raise HTTPException(

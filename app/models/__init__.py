@@ -2,5 +2,6 @@ from app.models.categoria import Categoria
 from app.models.fornecedor import Fornecedor
 from app.models.produto import Produto
 from app.models.mov_estoque import MovEstoque
+from app.models.usuario import Usuario
 
-__all__ = ["Categoria", "Fornecedor", "Produto", "MovEstoque"]
+__all__ = ["Categoria", "Fornecedor", "Produto", "MovEstoque", "Usuario"]

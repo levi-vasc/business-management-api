@@ -18,3 +18,6 @@ starlette==1.9.0
 typing-inspection==0.4.4
 typing_extensions==4.16.0
 uvicorn==0.54.0
+bcrypt==5.0.0
+pyjwt==2.15.1
+email-validator==2.3.0
