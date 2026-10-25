@@ -195,22 +195,7 @@ A API usa **Bearer Token (JWT)**. O token carrega `sub` (ID do usuário), `email
 1. **Primeiro usuário:** enquanto não existir nenhum usuário no banco, `POST /auth/registrar` é público. Cadastre o primeiro com `"role": "ADMIN"`.
 2. **Demais usuários:** depois disso, apenas um `ADMIN` autenticado pode cadastrar novos usuários.
 3. **Login:** `POST /auth/login` retorna o token.
-4. **Uso:** envie `Authorization: Bearer <token>` nas rotas protegidas.
-
-```bash
-# 1) Criar o primeiro administrador
-curl -X POST http://localhost:8000/auth/registrar \
-  -H "Content-Type: application/json" \
-  -d '{"nome":"Admin","email":"admin@exemplo.com","senha":"senha123","role":"ADMIN"}'
-
-# 2) Login
-curl -X POST http://localhost:8000/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"admin@exemplo.com","senha":"senha123"}'
-
-# 3) Chamar uma rota protegida
-curl http://localhost:8000/auth/me -H "Authorization: Bearer <access_token>"
-```
+4. **Uso:** Clique no botão `Authorize` e cole o token no campo.
 
 Usuários com `ativo = false` são impedidos de autenticar (`403`).
 
@@ -392,7 +377,8 @@ Todos os erros seguem o mesmo formato JSON:
 | Recurso não encontrado | `404` |
 | Erro de banco ou exceção não tratada | `500` (mensagem genérica; o stack trace vai apenas para o log do servidor) |
 
-> Observação: erros de validação retornam `400` (e não o `422` padrão do FastAPI).
+> [!NOTE]
+> Erros de validação retornam `400` (e não o `422` padrão do FastAPI).
 
 ## Testes
 
@@ -402,15 +388,11 @@ pytest
 
 Os testes ficam em `tests/` e cobrem produtos, movimentações de estoque, consultas avançadas e tratamento de exceções.
 
-> ⚠️ **Os testes usam o banco apontado por `DATABASE_URL`** e executam `Base.metadata.create_all` / `drop_all` ao redor de cada teste. Isso **apaga as tabelas mapeadas** do banco configurado. **Nunca** execute `pytest` apontando para um banco com dados reais — use um banco exclusivo de testes, por exemplo:
+> [!IMPORTANT]
+>  **Os testes usam o banco apontado por `DATABASE_URL`** e executam `Base.metadata.create_all` / `drop_all` ao redor de cada teste. Isso **apaga as tabelas mapeadas** do banco configurado. **Nunca** execute `pytest` apontando para um banco com dados reais — use um banco exclusivo de testes, por exemplo:
 >
 > ```bash
 > DATABASE_URL=postgresql+psycopg2://postgres:postgres@localhost:5432/business_management_test pytest
 > ```
 >
-> Alguns testes que chamam rotas protegidas precisam enviar um token válido; se algum falhar com `401`, verifique os cabeçalhos de autenticação nas fixtures.
-
-## Notas de segurança e pontos de atenção
-
-- **`SECRET_KEY`:** se a variável não estiver definida, o código usa uma chave fixa de desenvolvimento presente no repositório. **Sempre defina uma `SECRET_KEY` própria em produção.**
-- **`.env`:** não está listado no `.gitignore`. Adicione-o antes de versionar e use o `.env.example` como modelo.
+> Alguns testes que chamam rotas protegidas precisam enviar um token válido; se algum falhar com `401`, verifique os cabeçalhos nas fixtures.
