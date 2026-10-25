@@ -377,7 +377,8 @@ Todos os erros seguem o mesmo formato JSON:
 | Recurso não encontrado | `404` |
 | Erro de banco ou exceção não tratada | `500` (mensagem genérica; o stack trace vai apenas para o log do servidor) |
 
-> Observação: erros de validação retornam `400` (e não o `422` padrão do FastAPI).
+> [!NOTE]
+> Erros de validação retornam `400` (e não o `422` padrão do FastAPI).
 
 ## Testes
 
@@ -395,7 +396,3 @@ Os testes ficam em `tests/` e cobrem produtos, movimentações de estoque, consu
 > ```
 >
 > Alguns testes que chamam rotas protegidas precisam enviar um token válido; se algum falhar com `401`, verifique os cabeçalhos nas fixtures.
-
-## Notas de segurança e pontos de atenção
-
-- **`.env`:** não está listado no `.gitignore`. Adicione-o antes de versionar e use o `.env.example` como modelo.
