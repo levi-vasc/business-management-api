@@ -11,9 +11,8 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 logger = logging.getLogger("business_management_api")
 
-
 class AppException(Exception):
-    """Exceção base customizada para regras de negócio e erros controlados da aplicação."""
+
     def __init__(
         self,
         status_code: int = status.HTTP_400_BAD_REQUEST,
@@ -25,14 +24,11 @@ class AppException(Exception):
         self.detalhes = detalhes
         super().__init__(message)
 
-
 def _get_http_phrase(status_code: int) -> str:
-    """Retorna o nome oficial do status HTTP ou fallback para 'Error'."""
     try:
         return http.HTTPStatus(status_code).phrase
     except ValueError:
         return "Error"
-
 
 def _build_error_payload(
     status_code: int,
@@ -40,7 +36,7 @@ def _build_error_payload(
     path: str,
     detalhes: Optional[Any] = None,
 ) -> dict:
-    """Gera o payload JSON padronizado para respostas de erro."""
+
     return {
         "status_code": status_code,
         "error": _get_http_phrase(status_code),
@@ -50,9 +46,7 @@ def _build_error_payload(
         "detalhes": detalhes,
     }
 
-
 def register_exception_handlers(app: FastAPI) -> None:
-    """Registra os manipuladores globais de exceção na aplicação FastAPI."""
 
     @app.middleware("http")
     async def global_catch_all_middleware(request: Request, call_next):
@@ -166,7 +160,7 @@ def register_exception_handlers(app: FastAPI) -> None:
             exc,
             exc_info=True,
         )
-        # O cliente (web/mobile) NUNCA recebe stack trace ou detalhes sensíveis internos
+        # O cliente (web/mobile) não recebe stack trace ou detalhes sensíveis
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             content=_build_error_payload(

@@ -8,7 +8,6 @@ from app.schemas.categoria import CategoriaCreate, CategoriaUpdate, CategoriaRes
 
 router = APIRouter(prefix="/categorias", tags=["Categorias"])
 
-
 @router.post("/", response_model=CategoriaResponse, status_code=status.HTTP_201_CREATED)
 def criar_categoria(dados: CategoriaCreate, db: Session = Depends(get_db)):
     
@@ -25,11 +24,9 @@ def criar_categoria(dados: CategoriaCreate, db: Session = Depends(get_db)):
     db.refresh(nova_categoria)
     return nova_categoria
 
-
 @router.get("/", response_model=list[CategoriaResponse])
 def listar_categorias(db: Session = Depends(get_db)):
     return db.query(Categoria).all()
-
 
 @router.get("/{categoria_id}", response_model=CategoriaResponse)
 def obter_categoria(categoria_id: uuid.UUID, db: Session = Depends(get_db)):
@@ -40,7 +37,6 @@ def obter_categoria(categoria_id: uuid.UUID, db: Session = Depends(get_db)):
             detail="Categoria não encontrada."
         )
     return categoria
-
 
 @router.put("/{categoria_id}", response_model=CategoriaResponse)
 def atualizar_categoria(categoria_id: uuid.UUID, dados: CategoriaUpdate, db: Session = Depends(get_db)):
@@ -65,7 +61,6 @@ def atualizar_categoria(categoria_id: uuid.UUID, dados: CategoriaUpdate, db: Ses
     db.commit()
     db.refresh(categoria)
     return categoria
-
 
 @router.delete("/{categoria_id}", status_code=status.HTTP_200_OK)
 def excluir_categoria(categoria_id: uuid.UUID, db: Session = Depends(get_db)):
