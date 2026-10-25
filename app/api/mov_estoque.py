@@ -83,8 +83,7 @@ def listar_movimentacoes(
     fornecedor_id: Optional[uuid.UUID] = Query(None, description="Filtrar por fornecedor do produto"),
     produto_id: Optional[uuid.UUID] = Query(None, description="Filtrar por produto"),
     tipo: Optional[str] = Query(None, description="Filtrar por tipo: ENTRADA ou SAIDA"),
-    skip: int = Query(0, ge=0, description="Número de registros a pular"),
-    limit: int = Query(100, ge=1, le=500, description="Limite máximo de registros"),
+
     usuario: Usuario = Depends(obter_usuario_atual),
     db: Session = Depends(get_db),
 ):
@@ -125,7 +124,7 @@ def listar_movimentacoes(
     if data_fim:
         query = query.filter(MovEstoque.data <= data_fim)
 
-    resultados = query.order_by(MovEstoque.data.desc(), MovEstoque.id.desc()).offset(skip).limit(limit).all()
+    resultados = query.order_by(MovEstoque.data.desc(), MovEstoque.id.desc()).all()
 
     return [
         MovEstoqueDetalhadaResponse(

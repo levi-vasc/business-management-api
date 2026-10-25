@@ -203,8 +203,6 @@ class TestConsultasAvancadas(unittest.TestCase):
             fornecedor_id=self.forn_dell.id,
             produto_id=None,
             tipo=None,
-            skip=0,
-            limit=100,
             db=self.db,
         )
         self.assertEqual(len(movs_dell), 2)
@@ -220,8 +218,6 @@ class TestConsultasAvancadas(unittest.TestCase):
             fornecedor_id=self.forn_logitech.id,
             produto_id=None,
             tipo=None,
-            skip=0,
-            limit=100,
             db=self.db,
         )
         self.assertEqual(len(movs_logitech), 2)
@@ -242,8 +238,6 @@ class TestConsultasAvancadas(unittest.TestCase):
             fornecedor_id=None,
             produto_id=None,
             tipo=None,
-            skip=0,
-            limit=100,
             db=self.db,
         )
         self.assertEqual(len(movs_recentes), 2)
