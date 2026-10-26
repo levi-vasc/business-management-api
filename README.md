@@ -43,7 +43,7 @@ Construída com **FastAPI**, **SQLAlchemy 2** e **PostgreSQL**, com migrações 
 | Framework web | FastAPI |
 | Servidor ASGI | Uvicorn |
 | ORM | SQLAlchemy 2.x |
-| Banco de dados | PostgreSQL |
+| Banco de dados | PostgreSQL + Docker |
 | Migrações | Alembic |
 | Validação | Pydantic v2 |
 | Autenticação | PyJWT (HS256) + bcrypt |
@@ -87,6 +87,7 @@ A organização segue camadas simples: **rotas** (`api`) → **schemas** de vali
 
 - Python 3.13 (ou compatível com as versões do `requirements.txt`)
 - PostgreSQL em execução
+- Docker 
 - `pip` e `venv`
 
 ## Instalação e execução
@@ -110,19 +111,22 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. Criar o banco de dados
-
-```sql
-CREATE DATABASE business_management;
-```
-
-### 4. Configurar o ambiente
+### 3. Configurar o ambiente
 
 ```bash
 cp .env.example .env
 ```
 
 Edite o `.env` com suas credenciais (veja [Variáveis de ambiente](#variáveis-de-ambiente)).
+
+### 4. Criar o banco de dados
+
+```sql
+# Iniciar o contêiner PostgreSQL
+docker compose up -d
+# Verificar se o banco está pronto
+docker compose exec db psql -U postgres -c "\l"
+```
 
 ### 5. Aplicar as migrações
 
